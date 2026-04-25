@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Client Dashboard — BAMbs Consult</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Lato:wght@300;400;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+:root{
+  --b:#111;--w:#fff;--gl:#f5f5f5;--gm:#e0e0e0;--gd:#666;
+  --gold:#b8962e;--g2:#d4af5a;--green:#1a7a4a;--red:#c0392b;--blue:#1a4a7a;
+  --nav:64px;--sw:248px;
+  --fd:'Playfair Display',serif;--fb:'Lato',sans-serif;--fm:'Roboto Mono',monospace;
+  --sh:0 2px 12px rgba(0,0,0,.08);--r:6px;--tr:.24s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);background:var(--gl);color:var(--b);min-height:100vh}
+h1,h2,h3,h4,h5{font-family:var(--fd);line-height:1.2}
+button{cursor:pointer;font-family:var(--fb)}
+a{text-decoration:none;color:inherit}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-thumb{background:var(--gold);border-radius:3px}
+
+/* TOP BAR */
+#topbar{
+  position:fixed;top:0;left:0;right:0;height:var(--nav);
+  background:var(--b);border-bottom:2px solid var(--gold);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 18px;z-index:300;
+}
+.tb-l{display:flex;align-items:center;gap:11px}
+.tb-logo{font-family:var(--fd);font-size:16px;font-weight:900;color:#fff}
+.tb-logo em{color:var(--gold);font-style:normal}
+.tb-pill{background:var(--gold);color:#fff;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;padding:3px 9px;border-radius:2px;font-weight:700}
+.tb-r{display:flex;align-items:center;gap:13px}
+.tb-bell{position:relative;color:rgba(255,255,255,.6);font-size:17px;cursor:pointer;padding:4px}
+.tb-bell .dot{position:absolute;top:0;right:0;width:7px;height:7px;background:var(--red);border-radius:50%}
+.tb-user{display:flex;align-items:center;gap:9px}
+.tb-av{width:34px;height:34px;border-radius:50%;background:var(--gold);color:var(--b);font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tb-nm{font-size:13px;color:rgba(255,255,255,.75)}
+.tb-out{background:none;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.6);padding:6px 12px;font-size:12px;border-radius:var(--r);transition:var(--tr)}
+.tb-out:hover{border-color:var(--gold);color:var(--gold)}
+#mobt{display:none;background:none;border:none;color:#fff;font-size:20px;padding:6px}
+
+/* LAYOUT */
+.layout{display:flex;padding-top:var(--nav);min-height:100vh}
+
+/* SIDEBAR */
+#dsb{
+  width:var(--sw);flex-shrink:0;background:var(--w);
+  border-right:1px solid var(--gm);
+  position:fixed;top:var(--nav);left:0;bottom:0;
+  overflow-y:auto;z-index:200;
+  transition:transform var(--tr);
+}
+.sp{padding:20px 16px;border-bottom:1px solid var(--gm);text-align:center}
+.sp-av{width:58px;height:58px;border-radius:50%;background:var(--b);color:var(--gold);font-family:var(--fd);font-size:20px;font-weight:900;display:flex;align-items:center;justify-content:center;margin:0 auto 9px}
+.sp-nm{font-size:14px;font-weight:700;margin-bottom:2px}
+.sp-ref{font-family:var(--fm);font-size:11px;color:var(--gold);letter-spacing:.5px}
+.sp-ctry{font-size:12px;color:var(--gd);margin-top:3px}
+.sp-pill{display:inline-flex;align-items:center;gap:5px;background:#e8f5e9;color:var(--green);font-size:11px;font-weight:700;padding:3px 11px;border-radius:20px;margin-top:8px}
+.sp-pill .dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:blink 1.4s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.snav{padding:10px 0}
+.sg{padding:8px 16px 3px;font-size:10px;letter-spacing:1.5px;color:var(--gd);text-transform:uppercase;font-weight:700}
+.snav a{display:flex;align-items:center;gap:9px;padding:10px 16px;font-size:13px;color:var(--gd);border-left:3px solid transparent;transition:var(--tr);cursor:pointer}
+.snav a:hover,.snav a.on{color:var(--b);background:var(--gl);border-left-color:var(--gold)}
+.snav a i{width:15px;text-align:center;color:var(--gold);font-size:12px}
+.snav a .nb{margin-left:auto;background:var(--red);color:#fff;font-size:10px;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700}
+
+/* MAIN */
+.dm{margin-left:var(--sw);flex:1;padding:26px 22px;max-width:calc(100vw - var(--sw))}
+.pg{display:none}.pg.on{display:block}
+
+/* PAGE HEADER */
+.ph{margin-bottom:20px}
+.ph-cr{font-size:12px;color:var(--gd);margin-bottom:5px;display:flex;align-items:center;gap:5px}
+.ph-cr i{font-size:10px;color:var(--gold)}
+.ph h2{font-size:23px;font-weight:900;margin-bottom:2px}
+.ph p{font-size:13px;color:var(--gd)}
+
+/* WELCOME BANNER */
+.wban{background:var(--b);color:#fff;border-radius:var(--r);padding:24px 26px;display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:22px;position:relative;overflow:hidden}
+.wban::after{content:'';position:absolute;right:-30px;top:-30px;width:160px;height:160px;border:2px solid rgba(184,150,46,.12);border-radius:50%}
+.wban h3{font-size:18px;color:#fff;margin-bottom:4px}
+.wban p{font-size:13px;color:rgba(255,255,255,.5);line-height:1.6}
+.wb-btn{background:var(--gold);color:#fff;border:none;padding:10px 20px;font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;border-radius:var(--r);white-space:nowrap;transition:var(--tr);position:relative;z-index:1;cursor:pointer}
+.wb-btn:hover{background:var(--g2)}
+
+/* PROGRESS BAR */
+.opw{background:var(--w);border:1px solid var(--gm);border-radius:var(--r);padding:18px 20px;margin-bottom:22px;box-shadow:var(--sh)}
+.op-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.op-top h4{font-size:13px;font-weight:700}
+.op-pct{font-family:var(--fm);font-size:19px;font-weight:700;color:var(--gold)}
+.op-bar{height:10px;background:var(--gm);border-radius:5px;overflow:hidden}
+.op-fill{height:100%;border-radius:5px;width:0;transition:width 1.4s ease;background:linear-gradient(90deg,var(--gold),var(--green))}
+.op-labs{display:flex;justify-content:space-between;margin-top:6px}
+.op-labs span{font-size:10px;color:var(--gd)}
+
+/* STAT CARDS */
+.scards{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:14px;margin-bottom:22px}
+.sc{background:var(--w);border:1px solid var(--gm);border-radius:var(--r);padding:18px;box-shadow:var(--sh)}
+.sc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+.sc-ic{width:38px;height:38px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:14px}
+.icg{background:#fff8e1;color:var(--gold)}.icgr{background:#e8f5e9;color:var(--green)}
+.icb{background:#e3f0fb;color:var(--blue)}.icr{background:#fde8e8;color:var(--red)}
+.sc-lbl{font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--gd);font-weight:700}
+.sc-val{font-family:var(--fd);font-size:22px;font-weight:900;line-height:1;margin-bottom:2px}
+.sc-sub{font-size:12px;color:var(--gd)}
+.sc-tr{font-size:11px;margin-top:6px;display:flex;align-items:center;gap:4px}
+.tup{color:var(--green)}.tn{color:var(--gd)}.tr{color:var(--red)}
+
+/* QUICK ACTIONS */
+.qa{background:var(--w);border:1px solid var(--gm);border-radius:var(--r);padding:18px 20px;margin-bottom:22px;box-shadow:var(--sh)}
+.qa h4{font-size:14px;font-weight:700;margin-bottom:13px}
+.qa h4 i{color:var(--gold);margin-right:7px}
+.qa-row{display:flex;flex-wrap:wrap;gap:9px}
+.qa-p{background:var(--b);color:#fff;border:none;padding:9px 16px;font-size:13px;font-weight:700;border-radius:var(--r);display:flex;align-items:center;gap:6px;transition:var(--tr)}
+.qa-p:hover{background:var(--gold)}
+.qa-s{background:var(--w);color:var(--b);border:1px solid var(--gm);padding:9px 16px;font-size:13px;font-weight:700;border-radius:var(--r);display:flex;align-items:center;gap:6px;transition:var(--tr)}
+.qa-s:hover{border-color:var(--gold)}
+.qa-s i{color:var(--gold)}
+
+/* ACTIVITY */
+.af{background:var(--w);border:1px solid var(--gm);border-radius:var(--r);padding:18px 20px;box-shadow:var(--sh)}
+.af h4{font-size:14px;font-weight:700;margin-bottom:14px}
+.af h4 i{color:var(--gold);margin-right:7px}
+.afi{display:flex;gap:11px;padding-bottom:12px;border-bottom:1px solid var(--gl);margin-bottom:12px}
+.afi:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.afi-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.afi-b strong{display:block;font-size:13px;font-weight:700;margin-bottom:2px}
+.afi-b p{font-size:12px;color:var(--gd);line-height:1.6}
+.afi-t{font-size:11px;font-family:var(--fm);color:var(--gold);margin-top:3px;display:block}
+
+/* TIMELINE */
+.tc{background:var(--w);border:1px solid var(--gm);border-radius:var(--r);padding:22px;box-shadow:var(--sh)}
+.tc h3{font-size:17px;margin-bottom:4px}
+.tc-sub{font-size:13px;color:var(--gd);margin-bottom:20px}
+.tl{display:flex;flex-direction:column}
+.tlr{display:flex;gap:13px;position:relative}
+.tlr:not(:last-child)::after{content:'';position:absolute;left:17px;top:38px;bottom:-4px;width:2px;background:var(--gm)}
+.tlr.done::after{background:var(--green)}
+.tlr.cur::after{background:linear-gradient(var(--gold),var(--gm))}
+.tld{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;margin-bottom:16px;border:2px solid var(--gm)}
+.tld.done{background:var(--green);border-color:var(--green);color:#fff}
+.tld.cur{background:var(--gold);border-color:var(--gold);color:#fff;animation:glow 1s ease-in-out infinite alternate}
+@keyframes glow{from{box-shadow:0 0 3px var(--gold)}to{box-shadow:0 0 12px var(--gold)}}
+.tld.pnd{background:var(--w);color:var(--gm)}
+.tli{flex:1;padding-bottom:16px}
+.tli h4{font-size:13px;font-weight:700;margin-bottom:2px}
+.tli p{font-size:12px;color:var(--gd);line-height:1.6}
+.tli .td{font-size:11px;font-family:var(--fm);color:var(--gold);margin-top:3px}
+.ttag{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;margin-top:3px}
+.tt-d{background:#e8f5e9;color:var(--green)}.tt-c{background:#fff8e1;color:var(--gold)}.tt-p{background:var(--gl);color:var(--gd)}
+
+/* DOCUMENTS */
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.dcard{background:var(--w);border:1px solid var(--gm);border-radius:var(--r);padding:18px;box-shadow:var(--sh)}
+.dcard h4{font-size:14px;font-weight:700;margin-bottom:13px}
+.dcard h4 i{color:var(--gold);margin-right:7px}
+.dlist{display:flex;flex-direction:column;gap:8px}
+.di{display:flex;align-items:center;gap:10px;padding:9px;border:1px solid var(--gm);border-radius:var(--r);font-size:13px;transition:var(--tr)}
+.di:hover{border-color:var(--gold)}
+.di .si{width:15px;text-align:center}
+.si-ok{color:var(--green)}.si-pn{color:var(--gold)}.si-ms{color:var(--red)}
+.di .dn{flex:1}
+.dtag{font-size:10px;font-weight:700;letter-spacing:.5px;padding:2px 7px;border-radius:3px;text-transform:uppercase}
+.dt-ok{background:#e8f5e9;color:var(--green)}.dt-pn{background:#fff8e1;color:var(--gold)}.dt-ms{background:#fde8e8;color:var(--red)}
+.dropz{border:2px dashed var(--gm);border-radius:var(--r);padding:26px;text-align:center;cursor:pointer;transition:var(--tr);margin-bottom:11px}
+.dropz:hover,.dropz.ov{border-color:var(--gold);background:#fffdf5}
+.dropz i{font-size:28px;color:var(--gold);display:block;margin-bottom:8px}
+.dropz strong{font-size:13px;display:block;margin-bottom:3px}
+.dropz p{font-size:12px;color:var(--gd)}
+.up-btn{width:100%;background:var(--b);color:#fff;border:none;padding:10px;font-size:13px;font-weight:700;border-radius:var(--r);transition:var(--tr);margin-top:9px;cursor:pointer}
+.up-btn:hover{background:var(--gold)}
+.up-file{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--gl);border-radius:var(--r);margin-bottom:6px;font-size:13px}
+.up-file i{color:var(--gold)}.up-file .rm{margin-left:auto;background:none;border:none;color:var(--red);cursor:pointer;font-size:14px}
+
+/* AGREEMENT */
+.agw{max-width:640px}
+.notice{background:#fff8e1;border:1px solid var(--gold);border-radius:var(--r);padding:13px 16px;font-size:13px;line-height:1.7;margin-bottom:18px;display:flex;gap:9px}
+.notice i{color:var(--gold);flex-shrink:0;margin-top:2px}
+.agcard{background:var(--w);border:1px solid var(--gm);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);margin-bottom:16px}
+.ag-hd{background:var(--b);color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center}
+.ag-hd h4{font-size:15px}.ag-ref{font-family:var(--fm);font-size:11px;color:var(--gold)}
+.ag-bd{padding:18px 20px}
+.fr{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--gl);font-size:13px}
+.fr:last-of-type{border-bottom:none}
+.fr .lbl{color:var(--gd)}.fr .val{font-weight:700;font-family:var(--fm)}.fr .gv{color:var(--gold)}
+.ftot{display:flex;justify-content:space-between;padding:13px 20px;background:var(--gl);border-top:2px solid var(--gold)}
+.ftot .tl-lbl{font-size:14px;font-weight:700}.ftot .tl-val{font-family:var(--fm);font-size:19px;font-weight:900;color:var(--gold)}
+.terms{background:var(--w);border:1px solid var(--gm);border-radius:var(--r);padding:16px;font-size:12px;color:var(--gd);line-height:1.8;max-height:160px;overflow-y:auto;margin-bottom:13px}
+.terms h5{font-size:13px;color:var(--b);margin-bottom:8px}.terms p{margin-bottom:6px}
+.agchk{display:flex;align-items:flex-start;gap:8px;font-size:13px;margin-bottom:16px;cursor:pointer}
+.agchk input{width:15px;height:15px;accent-color:var(--gold);margin-top:2px;flex-shrink:0}
+.sign-row{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:16px}
+.sg label{display:block;font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:var(--gd);margin-bottom:5px;font-weight:700}
+.sg input{width:100%;border:1px solid var(--gm);padding:9px 11px;border-radius:var(--r);font-size:13px;font-family:var(--fb)}
+.sg input:focus{outline:none;border-color:var(--gold)}
+.sign-btn{width:100%;background:var(--b);color:#fff;border:none;padding:13px;font-size:14px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;border-radius:var(--r);transition:var(--tr);display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer}
+.sign-btn:hover:not(:disabled){background:var(--gold)}.sign-btn:disabled{background:var(--gm);cursor:not-allowed}
+
+/* CONSULTATION */
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.ccard{background:var(--w);border:1px solid var(--gm);border-radius:var(--r);padding:20px;box-shadow:var(--sh)}
+.ccard h4{font-size:14px;font-weight:700;margin-bottom:14px}
+.ccard h4 i{color:var(--gold);margin-right:7px}
+.upc{background:var(--b);color:#fff;border-radius:var(--r);padding:17px;display:flex;gap:13px;margin-bottom:16px}
+.uc-ic{width:40px;height:40px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--b);flex-shrink:0}
+.uc-h{font-size:14px;color:#fff;margin-bottom:3px}
+.uc-p{font-size:12px;color:rgba(255,255,255,.5);line-height:1.6}
+.uc-t{display:block;font-family:var(--fm);font-size:12px;color:var(--gold);margin-top:5px}
+.join-btn{display:inline-flex;align-items:center;gap:5px;background:var(--green);color:#fff;border:none;padding:7px 14px;font-size:12px;font-weight:700;border-radius:var(--r);margin-top:9px;transition:var(--tr);cursor:pointer}
+.join-btn:hover{background:#15653c}
+.slots{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
+.slot{padding:9px;border:1px solid var(--gm);border-radius:var(--r);text-align:center;font-size:12px;cursor:pointer;transition:var(--tr)}
+.slot:hover,.slot.sel{border-color:var(--gold);background:#fff8e1;font-weight:700}
+.slot.bkd{background:var(--gl);color:var(--gd);cursor:not-allowed;opacity:.6}
+.fld{margin-bottom:12px}
+.fld label{display:block;font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:var(--gd);margin-bottom:5px;font-weight:700}
+.fld input,.fld select{width:100%;border:1px solid var(--gm);padding:9px;border-radius:var(--r);font-size:13px;font-family:var(--fb)}
+.fld input:focus,.fld select:focus{outline:none;border-color:var(--gold)}
+.book-btn{width:100%;background:var(--gold);color:#fff;border:none;padding:11px;font-size:13px;font-weight:700;border-radius:var(--r);transition:var(--tr);cursor:pointer}
+.book-btn:hover{background:var(--g2)}
+.past-i{padding:12px;background:var(--gl);border-radius:var(--r);margin-bottom:9px}
+.past-i .pt{display:flex;justify-content:space-between;margin-bottom:4px}
+.past-i .pt strong{font-size:13px}
+.ptag{font-size:10px;background:#e8f5e9;color:var(--green);padding:2px 8px;border-radius:3px;font-weight:700}
+.past-i p{font-size:12px;color:var(--gd)}
+
+/* MESSAGES */
+.mwrap{background:var(--w);border:1px solid var(--gm);border-radius:var(--r);overflow:hidden;display:grid;grid-template-columns:258px 1fr;height:490px}
+.ml{border-right:1px solid var(--gm);overflow-y:auto}
+.ml-hd{padding:13px 14px;border-bottom:1px solid var(--gm);font-size:13px;font-weight:700;background:var(--gl)}
+.mp{padding:12px 14px;border-bottom:1px solid var(--gl);cursor:pointer;transition:var(--tr)}
+.mp:hover,.mp.sel{background:var(--gl)}
+.mp.unread .mp-from{color:var(--gold)}
+.mp-from{font-size:13px;font-weight:700;margin-bottom:2px;display:flex;justify-content:space-between}
+.mp-from span{font-size:11px;color:var(--gd);font-weight:400}
+.mp-txt{font-size:12px;color:var(--gd);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.mt{display:flex;flex-direction:column;height:100%}
+.mt-hd{padding:13px 16px;border-bottom:1px solid var(--gm);display:flex;align-items:center;gap:10px;background:var(--gl)}
+.mt-av{width:33px;height:33px;background:var(--b);border-radius:50%;color:var(--gold);font-weight:900;font-size:12px;display:flex;align-items:center;justify-content:center}
+.mt-hd h4{font-size:13px;font-weight:700;margin-bottom:1px}
+.mt-hd p{font-size:11px;color:var(--gd)}
+.mt-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:11px}
+.tm{max-width:78%}
+.tm.fr{align-self:flex-start}.tm.me{align-self:flex-end}
+.tm .bub{padding:10px 13px;border-radius:11px;font-size:13px;line-height:1.55}
+.tm.fr .bub{background:var(--b);color:#fff;border-bottom-left-radius:3px}
+.tm.me .bub{background:var(--gold);color:#fff;border-bottom-right-radius:3px}
+.tm .tt{font-size:10px;color:var(--gd);margin-top:2px;padding:0 3px}
+.mt-inp{padding:10px 13px;border-top:1px solid var(--gm);display:flex;gap:8px}
+.mt-inp input{flex:1;border:1px solid var(--gm);border-radius:18px;padding:9px 13px;font-size:13px;font-family:var(--fb)}
+.mt-inp input:focus{outline:none;border-color:var(--gold)}
+.mt-inp button{background:var(--gold);color:#fff;border:none;width:35px;height:35px;border-radius:50%;font-size:13px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+
+/* NOTIFICATIONS */
+.nlist{display:flex;flex-direction:column;gap:10px}
+.ni{display:flex;gap:12px;padding:14px;background:var(--w);border:1px solid var(--gm);border-radius:var(--r);transition:var(--tr)}
+.ni:hover{border-color:var(--gold)}
+.ni.unread{border-left:3px solid var(--gold)}
+.ni-ic{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.ni-b h5{font-size:13px;font-weight:700;margin-bottom:3px}
+.ni-b p{font-size:12px;color:var(--gd);line-height:1.6}
+.ni-t{font-size:11px;color:var(--gd);margin-top:3px;font-family:var(--fm)}
+
+/* SETTINGS */
+.stgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:720px}
+.stcard{background:var(--w);border:1px solid var(--gm);border-radius:var(--r);padding:20px;box-shadow:var(--sh)}
+.stcard h4{font-size:14px;font-weight:700;margin-bottom:14px}
+.stcard h4 i{color:var(--gold);margin-right:7px}
+.sf{margin-bottom:11px}
+.sf label{display:block;font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:var(--gd);margin-bottom:4px;font-weight:700}
+.sf input,.sf select{width:100%;border:1px solid var(--gm);padding:9px 10px;border-radius:var(--r);font-size:13px;font-family:var(--fb)}
+.sf input:focus,.sf select:focus{outline:none;border-color:var(--gold)}
+.sv-btn{width:100%;background:var(--b);color:#fff;border:none;padding:10px;font-size:13px;font-weight:700;border-radius:var(--r);transition:var(--tr);margin-top:3px;cursor:pointer}
+.sv-btn:hover{background:var(--gold)}
+.sec-note{margin-top:14px;padding:11px;background:var(--gl);border-radius:var(--r);font-size:12px;color:var(--gd);display:flex;gap:6px;line-height:1.6}
+.sec-note i{color:var(--gold);flex-shrink:0;margin-top:2px}
+
+/* TOAST */
+#toast{position:fixed;bottom:20px;right:20px;background:var(--green);color:#fff;padding:12px 17px;border-radius:var(--r);font-size:13px;font-weight:700;box-shadow:0 6px 24px rgba(0,0,0,.16);z-index:9999;display:flex;align-items:center;gap:8px;transform:translateY(70px);opacity:0;transition:all .33s ease}
+#toast.show{transform:translateY(0);opacity:1}
+
+/* RESPONSIVE */
+@media(max-width:860px){
+  #dsb{transform:translateX(-100%)}
+  #dsb.open{transform:translateX(0)}
+  .dm{margin-left:0;padding:16px 13px;max-width:100vw}
+  #mobt{display:block}
+  .tb-nm{display:none}
+  .dgrid,.cgrid,.stgrid,.sign-row{grid-template-columns:1fr}
+  .mwrap{grid-template-columns:1fr;height:auto}
+  .ml{max-height:170px}
+}
+@media(max-width:540px){
+  .scards{grid-template-columns:1fr 1fr}
+  .wban{flex-direction:column;text-align:center}
+  .slots{grid-template-columns:1fr 1fr}
+  .qa-row{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <div class="tb-l">
+    <button id="mobt" onclick="document.getElementById('dsb').classList.toggle('open')"><i class="fas fa-bars"></i></button>
+    <div class="tb-logo">BAMbs <em>Consult</em></div>
+    <span class="tb-pill">Client Portal</span>
+  </div>
+  <div class="tb-r">
+    <div class="tb-bell" onclick="showPg('notifications')"><i class="fas fa-bell"></i><div class="dot"></div></div>
+    <div class="tb-user">
+      <div class="tb-av" id="topAv">JS</div>
+      <span class="tb-nm" id="topNm">John Smith</span>
+    </div>
+    <button class="tb-out" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+  </div>
+</div>
+
+<div class="layout">
+
+<nav id="dsb">
+  <div class="sp">
+    <div class="sp-av" id="spAv">JS</div>
+    <div class="sp-nm" id="spNm">John Smith</div>
+    <div class="sp-ref" id="spRef">BAC-GL-30847</div>
+    <div class="sp-ctry" id="spCtry"><i class="fas fa-map-marker-alt" style="color:var(--gold);margin-right:3px"></i>United States</div>
+    <div class="sp-pill"><div class="dot"></div>Case Active</div>
+  </div>
+  <div class="snav">
+    <div class="sg">Overview</div>
+    <a onclick="showPg('overview')" class="on"><i class="fas fa-gauge-high"></i>Dashboard</a>
+    <a onclick="showPg('progress')"><i class="fas fa-route"></i>Case Progress</a>
+    <div class="sg">My Case</div>
+    <a onclick="showPg('documents')"><i class="fas fa-folder-open"></i>Documents<span class="nb" id="docBadge">2</span></a>
+    <a onclick="showPg('agreement')"><i class="fas fa-file-signature"></i>Service Agreement</a>
+    <a onclick="showPg('consultation')"><i class="fas fa-video"></i>Book Consultation</a>
+    <div class="sg">Communication</div>
+    <a onclick="showPg('messages')"><i class="fas fa-envelope"></i>Messages<span class="nb">3</span></a>
+    <a onclick="showPg('notifications')"><i class="fas fa-bell"></i>Notifications</a>
+    <div class="sg">Account</div>
+    <a onclick="showPg('settings')"><i class="fas fa-gear"></i>Settings</a>
+    <a href="index.html"><i class="fas fa-arrow-left"></i>Back to Website</a>
+  </div>
+</nav>
+
+<main class="dm">
+
+<!-- OVERVIEW -->
+<div class="pg on" id="pg-overview">
+  <div class="ph">
+    <div class="ph-cr"><i class="fas fa-house"></i> Dashboard</div>
+    <h2>Welcome back, <span id="fname">John</span></h2>
+    <p>Here is the latest status of your fund recovery case.</p>
+  </div>
+  <div class="wban">
+    <div>
+      <h3>Your Case Is Under Active Investigation</h3>
+      <p>Case: <strong style="color:var(--gold);font-family:var(--fm)" id="banRef">BAC-GL-30847</strong> &nbsp;&middot;&nbsp; Manager: <strong style="color:rgba(255,255,255,.85)">Mr. David Laurent</strong><br>Updated: <span style="color:rgba(255,255,255,.5)" id="updTime">Today</span></p>
+    </div>
+    <button class="wb-btn" onclick="showPg('progress')"><i class="fas fa-chart-line" style="margin-right:6px"></i>View Progress</button>
+  </div>
+  <div class="opw">
+    <div class="op-top"><h4><i class="fas fa-spinner fa-spin" style="color:var(--gold);margin-right:6px"></i>Overall Recovery Progress</h4><span class="op-pct">38%</span></div>
+    <div class="op-bar"><div class="op-fill" id="opFill"></div></div>
+    <div class="op-labs"><span>Registered</span><span>Assessment</span><span>Investigation</span><span>Legal</span><span>Recovery</span></div>
+  </div>
+  <div class="scards">
+    <div class="sc"><div class="sc-top"><div class="sc-ic icg"><i class="fas fa-dollar-sign"></i></div><span class="sc-lbl">Amount Claimed</span></div><div class="sc-val" id="claimV">$0</div><div class="sc-sub">Reported loss amount</div><div class="sc-tr tn"><i class="fas fa-clock"></i> Submitted on registration</div></div>
+    <div class="sc"><div class="sc-top"><div class="sc-ic icgr"><i class="fas fa-check-circle"></i></div><span class="sc-lbl">Documents</span></div><div class="sc-val">3/5</div><div class="sc-sub">Files submitted to case</div><div class="sc-tr tr"><i class="fas fa-exclamation-circle"></i> 2 documents still needed</div></div>
+    <div class="sc"><div class="sc-top"><div class="sc-ic icb"><i class="fas fa-calendar-check"></i></div><span class="sc-lbl">Next Consultation</span></div><div class="sc-val" style="font-size:17px">Thu 29 Apr</div><div class="sc-sub">10:00 AM GMT &mdash; Video Call</div><div class="sc-tr tup"><i class="fas fa-circle" style="font-size:8px"></i> Confirmed</div></div>
+    <div class="sc"><div class="sc-top"><div class="sc-ic icg"><i class="fas fa-envelope"></i></div><span class="sc-lbl">Messages</span></div><div class="sc-val">3</div><div class="sc-sub">Unread from case team</div><div class="sc-tr tr"><i class="fas fa-circle" style="font-size:8px"></i> Action required</div></div>
+  </div>
+  <div class="qa">
+    <h4><i class="fas fa-bolt"></i>Quick Actions</h4>
+    <div class="qa-row">
+      <button class="qa-p" onclick="showPg('documents')"><i class="fas fa-upload"></i>Upload Documents</button>
+      <button class="qa-s" onclick="showPg('consultation')"><i class="fas fa-video"></i>Schedule Call</button>
+      <button class="qa-s" onclick="showPg('messages')"><i class="fas fa-envelope"></i>Message Team</button>
+      <button class="qa-s" onclick="showPg('agreement')"><i class="fas fa-file-signature"></i>Sign Agreement</button>
+    </div>
+  </div>
+  <div class="af">
+    <h4><i class="fas fa-clock-rotate-left"></i>Recent Activity</h4>
+    <div class="afi"><div class="afi-dot" style="background:var(--gold)"></div><div class="afi-b"><strong>Case investigation initiated</strong><p>Your case manager has begun tracing fund movements through our global financial network.</p><span class="afi-t">Today, 09:14 AM</span></div></div>
+    <div class="afi"><div class="afi-dot" style="background:var(--green)"></div><div class="afi-b"><strong>Document verified: Bank Statement</strong><p>Your 6-month bank statement has been verified and added to your case file.</p><span class="afi-t">Yesterday, 03:22 PM</span></div></div>
+    <div class="afi"><div class="afi-dot" style="background:var(--blue)"></div><div class="afi-b"><strong>Account registered successfully</strong><p>Your BAMbs Consult client account was created and verified.</p><span class="afi-t">2 days ago, 11:05 AM</span></div></div>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="pg" id="pg-progress">
+  <div class="ph"><div class="ph-cr"><i class="fas fa-chevron-right"></i> Case Progress</div><h2>Recovery Progress</h2><p>Step-by-step status of your fund recovery case.</p></div>
+  <div class="tc">
+    <h3>Case Timeline &mdash; <span style="color:var(--gold);font-family:var(--fm)" id="progRef">BAC-GL-30847</span></h3>
+    <p class="tc-sub">Manager: <strong>Mr. David Laurent</strong> &nbsp;&middot;&nbsp; Estimated completion: <strong>6&ndash;10 weeks</strong></p>
+    <div class="tl">
+      <div class="tlr done"><div class="tld done"><i class="fas fa-check"></i></div><div class="tli"><h4>Registration &amp; Identity Verification</h4><p>Account created and identity verified using global KYC standards.</p><div class="td">Completed &mdash; April 21, 2025</div><div class="ttag tt-d"><i class="fas fa-check"></i> Completed</div></div></div>
+      <div class="tlr done"><div class="tld done"><i class="fas fa-check"></i></div><div class="tli"><h4>Initial Case Assessment</h4><p>Senior analysts confirmed case eligible. Priority score: <strong>HIGH</strong>.</p><div class="td">Completed &mdash; April 22, 2025</div><div class="ttag tt-d"><i class="fas fa-check"></i> Completed</div></div></div>
+      <div class="tlr cur"><div class="tld cur"><i class="fas fa-magnifying-glass"></i></div><div class="tli"><h4>Financial Investigation</h4><p>Forensic team tracing fund movements. Receiving institution identified. Freeze request being prepared.</p><div class="td">In Progress &mdash; Started April 23, 2025</div><div class="ttag tt-c"><i class="fas fa-spinner fa-spin"></i> In Progress</div></div></div>
+      <div class="tlr"><div class="tld pnd"><i class="fas fa-gavel"></i></div><div class="tli"><h4>Legal Filing &amp; Regulatory Action</h4><p>Formal legal claims will be filed with relevant regulatory bodies worldwide. Our legal team will represent your interests.</p><div class="td">Pending &mdash; Estimated: Week 4</div><div class="ttag tt-p"><i class="fas fa-clock"></i> Pending</div></div></div>
+      <div class="tlr"><div class="tld pnd"><i class="fas fa-building-columns"></i></div><div class="tli"><h4>Fund Negotiation &amp; Return</h4><p>Recovered funds transferred to your verified bank account with full documentation provided.</p><div class="td">Pending &mdash; Estimated: Week 8&ndash;12</div><div class="ttag tt-p"><i class="fas fa-clock"></i> Pending</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- DOCUMENTS -->
+<div class="pg" id="pg-documents">
+  <div class="ph"><div class="ph-cr"><i class="fas fa-chevron-right"></i> Documents</div><h2>Case Documents</h2><p>Upload and manage all documents for your recovery case.</p></div>
+  <div class="dgrid">
+    <div class="dcard">
+      <h4><i class="fas fa-folder-open"></i>Submitted Documents</h4>
+      <div class="dlist">
+        <div class="di"><i class="fas fa-id-card si si-ok"></i><span class="dn">Passport / National ID</span><span class="dtag dt-ok">Verified</span></div>
+        <div class="di"><i class="fas fa-file-invoice-dollar si si-ok"></i><span class="dn">Bank Statement (6 months)</span><span class="dtag dt-ok">Verified</span></div>
+        <div class="di"><i class="fas fa-receipt si si-ok"></i><span class="dn">Transaction Records</span><span class="dtag dt-ok">Received</span></div>
+        <div class="di"><i class="fas fa-envelope si si-pn"></i><span class="dn">Correspondence Evidence</span><span class="dtag dt-pn">Under Review</span></div>
+        <div class="di"><i class="fas fa-file-contract si si-ms"></i><span class="dn">Investment Agreement</span><span class="dtag dt-ms">Missing</span></div>
+        <div class="di"><i class="fas fa-photo-film si si-ms"></i><span class="dn">Screenshots / Evidence</span><span class="dtag dt-ms">Missing</span></div>
+      </div>
+    </div>
+    <div class="dcard">
+      <h4><i class="fas fa-cloud-upload-alt"></i>Upload Documents</h4>
+      <div class="dropz" id="dropZ" onclick="document.getElementById('docIn').click()" ondragover="event.preventDefault();this.classList.add('ov')" ondragleave="this.classList.remove('ov')" ondrop="onDrop(event)">
+        <i class="fas fa-cloud-upload-alt"></i>
+        <strong>Drag &amp; Drop or Click to Browse</strong>
+        <p>PDF, JPG, PNG, DOC, XLS &nbsp;&middot;&nbsp; Max 20MB &nbsp;&middot;&nbsp; AES-256 encrypted</p>
+      </div>
+      <input type="file" id="docIn" multiple style="display:none" onchange="onFiles(this.files)"/>
+      <div id="docList"></div>
+      <div style="font-size:12px;color:var(--gd);background:var(--gl);padding:10px;border-radius:var(--r);display:flex;gap:6px;margin-top:9px"><i class="fas fa-lock" style="color:var(--gold);margin-top:2px"></i><span>Files encrypted end-to-end on ISO 27001-certified servers.</span></div>
+      <button class="up-btn" onclick="submitDocs()"><i class="fas fa-paper-plane" style="margin-right:6px"></i>Submit to Case File</button>
+    </div>
+  </div>
+</div>
+
+<!-- AGREEMENT -->
+<div class="pg" id="pg-agreement">
+  <div class="ph"><div class="ph-cr"><i class="fas fa-chevron-right"></i> Service Agreement</div><h2>Service Agreement</h2><p>Review and sign your BAMbs Consult engagement agreement.</p></div>
+  <div class="agw">
+    <div class="notice"><i class="fas fa-info-circle"></i><span><strong>BAMbs Consult operates on a strict contingency basis.</strong> No upfront fees. Our service fee is only a percentage of funds successfully recovered. You pay nothing if we do not recover your funds.</span></div>
+    <div class="agcard">
+      <div class="ag-hd"><h4>Engagement Summary</h4><span class="ag-ref">Issued: April 23, 2025</span></div>
+      <div class="ag-bd">
+        <div class="fr"><span class="lbl">Client Name</span><span class="val" id="agNm">John Smith</span></div>
+        <div class="fr"><span class="lbl">Case Reference</span><span class="val gv" id="agRef">BAC-GL-30847</span></div>
+        <div class="fr"><span class="lbl">Case Type</span><span class="val" id="agType">Investment / Forex Fraud</span></div>
+        <div class="fr"><span class="lbl">Reported Loss</span><span class="val" id="agLoss">$25,000</span></div>
+        <div class="fr"><span class="lbl">Service Model</span><span class="val">Contingency &mdash; No Recovery, No Fee</span></div>
+        <div class="fr"><span class="lbl">Success Fee (if recovered)</span><span class="val gv">15% of recovered amount</span></div>
+        <div class="fr"><span class="lbl">Amount Due Today</span><span class="val" style="color:var(--green)">$0.00 &mdash; None</span></div>
+        <div class="fr"><span class="lbl">Estimated Timeline</span><span class="val">6&ndash;12 Weeks</span></div>
+      </div>
+      <div class="ftot"><span class="tl-lbl">Amount Payable Now</span><span class="tl-val">$0.00</span></div>
+    </div>
+    <div class="terms">
+      <h5>BAMbs Consult Service Agreement &mdash; Terms &amp; Conditions</h5>
+      <p>This agreement is entered into between <strong>BAMbs Consult (BAc)</strong> and the client named above.</p>
+      <p><strong>1. Scope of Services.</strong> BAc agrees to conduct a thorough investigation including fund tracing, regulatory liaison, legal coordination, and negotiation with financial institutions on behalf of the Client.</p>
+      <p><strong>2. No Upfront Fees.</strong> BAc does not charge any upfront, advance, or administrative fees. All fees are strictly contingency-based.</p>
+      <p><strong>3. Success Fee.</strong> Upon successful recovery, a fee of 15% of the total recovered amount is payable, covering all investigative, legal, and administrative costs.</p>
+      <p><strong>4. Client Obligations.</strong> The Client agrees to provide accurate and complete information and cooperate fully with the investigation.</p>
+      <p><strong>5. Confidentiality.</strong> All information shared shall remain strictly confidential except where required by law.</p>
+      <p><strong>6. No Guarantee.</strong> While BAc has a high success rate, no guarantee of recovery can be made.</p>
+      <p><strong>7. Governing Law.</strong> This agreement is governed by applicable international financial law.</p>
+    </div>
+    <label class="agchk"><input type="checkbox" id="agChk" onchange="toggleSign()"/>I have read and agree to the BAMbs Consult Service Agreement. I confirm all information provided is accurate.</label>
+    <div class="sign-row">
+      <div class="sg"><label>Full Legal Name (Signature)</label><input type="text" id="signNm" placeholder="Type your full name to sign"/></div>
+      <div class="sg"><label>Date</label><input type="text" id="signDt" value="23 April 2025"/></div>
+    </div>
+    <button class="sign-btn" id="signBtn" disabled onclick="doSign()"><i class="fas fa-file-signature"></i>Sign &amp; Submit Agreement</button>
+  </div>
+</div>
+
+<!-- CONSULTATION -->
+<div class="pg" id="pg-consultation">
+  <div class="ph"><div class="ph-cr"><i class="fas fa-chevron-right"></i> Consultations</div><h2>Book a Consultation</h2><p>Schedule a call with your assigned case manager.</p></div>
+  <div class="cgrid">
+    <div>
+      <div class="upc">
+        <div class="uc-ic"><i class="fas fa-video"></i></div>
+        <div>
+          <h4 class="uc-h">Upcoming Consultation</h4>
+          <p class="uc-p">Case Review &amp; Investigation Update<br>With: <strong>Mr. David Laurent</strong></p>
+          <span class="uc-t"><i class="fas fa-calendar" style="margin-right:5px"></i>Thursday, 29 April 2025 &mdash; 10:00 AM GMT</span>
+          <button class="join-btn"><i class="fas fa-video"></i>Join Video Call</button>
+        </div>
+      </div>
+      <div class="ccard">
+        <h4><i class="fas fa-calendar-plus"></i>Schedule New Appointment</h4>
+        <div class="fld"><label>Select Date</label><input type="date" id="cDate"/></div>
+        <div class="fld"><label>Available Time Slots (GMT)</label></div>
+        <div class="slots">
+          <div class="slot" onclick="pickSlot(this)">09:00 AM</div>
+          <div class="slot bkd">10:00 AM</div>
+          <div class="slot" onclick="pickSlot(this)">11:00 AM</div>
+          <div class="slot" onclick="pickSlot(this)">01:00 PM</div>
+          <div class="slot" onclick="pickSlot(this)">02:00 PM</div>
+          <div class="slot bkd">03:00 PM</div>
+          <div class="slot" onclick="pickSlot(this)">04:00 PM</div>
+          <div class="slot" onclick="pickSlot(this)">05:00 PM</div>
+        </div>
+        <div class="fld" style="margin-top:12px"><label>Call Type</label><select id="cType"><option>Video Call (Recommended)</option><option>Phone Call</option><option>In-Person (Office Visit)</option></select></div>
+        <button class="book-btn" onclick="doBook()"><i class="fas fa-calendar-check" style="margin-right:6px"></i>Confirm Booking</button>
+      </div>
+    </div>
+    <div class="ccard">
+      <h4><i class="fas fa-history"></i>Past Consultations</h4>
+      <div class="past-i"><div class="pt"><strong>Initial Case Review</strong><span class="ptag">Completed</span></div><p>April 22, 2025 &mdash; 11:00 AM GMT &middot; 45 min &middot; Mr. David Laurent &middot; Video</p></div>
+      <div class="past-i"><div class="pt"><strong>Document Verification Call</strong><span class="ptag">Completed</span></div><p>April 21, 2025 &mdash; 02:00 PM GMT &middot; 20 min &middot; Ms. Ana Ferreira &middot; Phone</p></div>
+      <div style="margin-top:16px;background:var(--b);border-radius:var(--r);padding:15px;color:#fff">
+        <h5 style="font-size:13px;color:#fff;margin-bottom:7px"><i class="fas fa-headset" style="color:var(--gold);margin-right:6px"></i>Emergency Contact</h5>
+        <p style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.7">
+          <a href="tel:+442079460958" style="color:var(--gold);font-weight:700">+44 20 7946 0958</a> (24/7 global line)<br>
+          <a href="tel:+12125550198" style="color:var(--gold);font-weight:700">+1 212 555 0198</a> (USA)<br>
+          <a href="mailto:recovery@bambsconsult.org" style="color:var(--gold);font-weight:700">recovery@bambsconsult.org</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MESSAGES -->
+<div class="pg" id="pg-messages">
+  <div class="ph"><div class="ph-cr"><i class="fas fa-chevron-right"></i> Messages</div><h2>Messages</h2><p>Communicate securely with your BAMbs Consult case team.</p></div>
+  <div class="mwrap">
+    <div class="ml">
+      <div class="ml-hd">Inbox (3 unread)</div>
+      <div class="mp unread sel" onclick="loadThread(0,this)"><div class="mp-from">David Laurent <span>09:14</span></div><div class="mp-txt">Investigation update &mdash; institution identified...</div></div>
+      <div class="mp unread" onclick="loadThread(1,this)"><div class="mp-from">Ana Ferreira <span>Yesterday</span></div><div class="mp-txt">Statement verified. Please upload missing docs...</div></div>
+      <div class="mp unread" onclick="loadThread(2,this)"><div class="mp-from">BAc Legal Team <span>2 days ago</span></div><div class="mp-txt">Service agreement ready for your signature...</div></div>
+      <div class="mp" onclick="loadThread(3,this)"><div class="mp-from">BAc Support <span>3 days ago</span></div><div class="mp-txt">Welcome! Your account has been activated...</div></div>
+    </div>
+    <div class="mt">
+      <div class="mt-hd"><div class="mt-av" id="thAv">DL</div><div><h4 id="thFrom">David Laurent</h4><p id="thRole">Senior Case Manager &middot; BAMbs Consult</p></div></div>
+      <div class="mt-msgs" id="thMsgs">
+        <div class="tm fr"><div class="bub">Good morning! I have an important update on your case.</div><div class="tt">David Laurent &middot; 09:14 AM</div></div>
+        <div class="tm fr"><div class="bub">Our forensic team has identified the receiving institution. A formal freeze request is being prepared.</div><div class="tt">David Laurent &middot; 09:15 AM</div></div>
+        <div class="tm fr"><div class="bub">Could you please upload your Investment Agreement? It will significantly strengthen our legal position.</div><div class="tt">David Laurent &middot; 09:16 AM</div></div>
+      </div>
+      <div class="mt-inp"><input type="text" id="replyIn" placeholder="Type a secure message..." onkeydown="if(event.key==='Enter')doReply()"/><button onclick="doReply()"><i class="fas fa-paper-plane"></i></button></div>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATIONS -->
+<div class="pg" id="pg-notifications">
+  <div class="ph"><div class="ph-cr"><i class="fas fa-chevron-right"></i> Notifications</div><h2>Notifications</h2><p>Important updates about your case.</p></div>
+  <div class="nlist">
+    <div class="ni unread"><div class="ni-ic" style="background:#fff8e1;color:var(--gold)"><i class="fas fa-magnifying-glass-chart"></i></div><div class="ni-b"><h5>Investigation Update</h5><p>Your case manager has identified the receiving institution. A formal freeze request is being prepared.</p><div class="ni-t">Today, 09:14 AM</div></div></div>
+    <div class="ni unread"><div class="ni-ic" style="background:#e8f5e9;color:var(--green)"><i class="fas fa-file-circle-check"></i></div><div class="ni-b"><h5>Document Verified</h5><p>Your 6-month bank statement has been verified and added to your case file.</p><div class="ni-t">Yesterday, 03:22 PM</div></div></div>
+    <div class="ni unread"><div class="ni-ic" style="background:#fde8e8;color:var(--red)"><i class="fas fa-triangle-exclamation"></i></div><div class="ni-b"><h5>Action Required &mdash; Missing Documents</h5><p>2 documents still missing: Investment Agreement and Screenshots. Please upload to proceed to legal stage.</p><div class="ni-t">Yesterday, 10:05 AM</div></div></div>
+    <div class="ni"><div class="ni-ic" style="background:#e3f0fb;color:var(--blue)"><i class="fas fa-calendar-check"></i></div><div class="ni-b"><h5>Consultation Confirmed</h5><p>Your consultation with Mr. David Laurent is confirmed for Thursday, 29 April at 10:00 AM GMT.</p><div class="ni-t">2 days ago, 02:30 PM</div></div></div>
+    <div class="ni"><div class="ni-ic" style="background:#fff8e1;color:var(--gold)"><i class="fas fa-user-check"></i></div><div class="ni-b"><h5>Account Activated</h5><p>Your BAMbs Consult client portal has been activated. Welcome &mdash; your recovery journey begins here.</p><div class="ni-t">3 days ago, 11:05 AM</div></div></div>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="pg" id="pg-settings">
+  <div class="ph"><div class="ph-cr"><i class="fas fa-chevron-right"></i> Settings</div><h2>Account Settings</h2><p>Manage your profile and security preferences.</p></div>
+  <div class="stgrid">
+    <div class="stcard">
+      <h4><i class="fas fa-user"></i>Profile</h4>
+      <div class="sf"><label>Full Name</label><input type="text" id="stNm" value="John Smith"/></div>
+      <div class="sf"><label>Email</label><input type="email" id="stEmail" value="john.smith@email.com"/></div>
+      <div class="sf"><label>Phone</label><input type="tel" value="+1 212 555 0198"/></div>
+      <div class="sf"><label>Country</label><select><option>United States</option><option>United Kingdom</option><option>Australia</option><option>Nigeria</option><option>Other</option></select></div>
+      <button class="sv-btn" onclick="showToast('Profile updated successfully')">Save Changes</button>
+    </div>
+    <div class="stcard">
+      <h4><i class="fas fa-shield-halved"></i>Security</h4>
+      <div class="sf"><label>Current Password</label><input type="password" placeholder="Current password"/></div>
+      <div class="sf"><label>New Password</label><input type="password" placeholder="New password"/></div>
+      <div class="sf"><label>Confirm Password</label><input type="password" placeholder="Confirm password"/></div>
+      <button class="sv-btn" onclick="showToast('Password updated successfully')">Update Password</button>
+      <div class="sec-note"><i class="fas fa-lock"></i>Session secured with AES-256 encryption under ISO 27001 standards.</div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<div id="toast"><i class="fas fa-check-circle"></i><span id="toastTxt">Done</span></div>
+
+<script>
+/* ── READ STORED CLIENT DATA ── */
+function get(key, fallback) {
+  try { var v = sessionStorage.getItem('bac_' + key); return v || fallback; } catch(e) { return fallback; }
+}
+var C = {
+  name:    get('name',    'John Smith'),
+  ref:     get('ref',     'BAC-GL-30847'),
+  loss:    get('loss',    '$25,000'),
+  country: get('country', 'United States'),
+  type:    get('type',    'Investment / Forex Fraud'),
+  email:   get('email',  'client@email.com')
+};
+var fname = C.name.split(' ')[0];
+var inits = '';
+C.name.split(' ').slice(0,2).forEach(function(n){ if(n) inits += n[0].toUpperCase(); });
+
+/* ── POPULATE DOM ── */
+function setT(id, v) { var e=document.getElementById(id); if(e) e.textContent=v; }
+function setV(id, v) { var e=document.getElementById(id); if(e) e.value=v; }
+setT('fname',   fname);   setT('topNm',  C.name); setT('topAv', inits);
+setT('spNm',    C.name);  setT('spRef',  C.ref);  setT('spAv',  inits);
+setT('banRef',  C.ref);   setT('progRef',C.ref);
+setT('agNm',    C.name);  setT('agRef',  C.ref);
+setT('agType',  C.type);  setT('agLoss', C.loss);
+setT('stNm',    C.name);  setV('stNm',   C.name); setV('stEmail', C.email);
+var ctEl = document.getElementById('spCtry');
+if(ctEl) ctEl.innerHTML = '<i class="fas fa-map-marker-alt" style="color:var(--gold);margin-right:3px"></i>' + C.country;
+var now = new Date();
+var h=now.getHours(), m=now.getMinutes(), ap=h>=12?'PM':'AM';
+h=h%12||12;
+var updEl = document.getElementById('updTime');
+if(updEl) updEl.textContent = 'Today, ' + h + ':' + (m<10?'0':'') + m + ' ' + ap;
+
+/* ── ANIMATE CLAIM AMOUNT ── */
+var rawLoss = parseInt(C.loss.replace(/[^0-9]/g,'')) || 25000;
+var cnt=0, step=rawLoss/60;
+var ci = setInterval(function(){
+  cnt+=step; if(cnt>=rawLoss){cnt=rawLoss;clearInterval(ci);}
+  var el=document.getElementById('claimV');
+  if(el) el.textContent = cnt>=1000 ? '$'+(cnt/1000).toFixed(1)+'K' : '$'+Math.floor(cnt);
+},30);
+
+/* ── PROGRESS BAR ── */
+setTimeout(function(){ var f=document.getElementById('opFill'); if(f) f.style.width='38%'; },500);
+
+/* ── PAGE NAVIGATION ── */
+function showPg(id) {
+  document.querySelectorAll('.pg').forEach(function(p){ p.classList.remove('on'); });
+  document.querySelectorAll('.snav a').forEach(function(a){ a.classList.remove('on'); });
+  var pg = document.getElementById('pg-'+id);
+  if(pg) pg.classList.add('on');
+  document.querySelectorAll('.snav a').forEach(function(a){
+    var oc = a.getAttribute('onclick');
+    if(oc && oc.indexOf("'"+id+"'")!==-1) a.classList.add('on');
+  });
+  document.getElementById('dsb').classList.remove('open');
+  window.scrollTo(0,0);
+}
+
+/* ── TOAST ── */
+function showToast(msg) {
+  var t=document.getElementById('toast'), tx=document.getElementById('toastTxt');
+  if(tx) tx.textContent=msg;
+  if(t){ t.classList.add('show'); setTimeout(function(){ t.classList.remove('show'); },2800); }
+}
+
+/* ── LOGOUT ── */
+function doLogout() {
+  if(confirm('Log out of the BAMbs Consult portal?')) window.location.href='index.html';
+}
+
+/* ── AGREEMENT ── */
+function toggleSign() {
+  var c=document.getElementById('agChk'), b=document.getElementById('signBtn');
+  if(c&&b) b.disabled=!c.checked;
+}
+function doSign() {
+  var nm=document.getElementById('signNm');
+  if(!nm||!nm.value.trim()){alert('Please type your full name to sign.');return;}
+  var btn=document.getElementById('signBtn');
+  btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> Submitting...';
+  btn.disabled=true;
+  setTimeout(function(){
+    btn.innerHTML='<i class="fas fa-check-circle"></i> Agreement Signed &amp; Submitted';
+    btn.style.background='var(--green)';
+    showToast('Agreement signed! Your case manager has been notified.');
+  },1800);
+}
+
+/* ── CONSULTATION ── */
+var tom=new Date(); tom.setDate(tom.getDate()+1);
+var cd=document.getElementById('cDate'); if(cd) cd.value=tom.toISOString().split('T')[0];
+function pickSlot(el){
+  document.querySelectorAll('.slot').forEach(function(s){s.classList.remove('sel');});
+  el.classList.add('sel');
+}
+function doBook(){
+  var d=document.getElementById('cDate'), s=document.querySelector('.slot.sel'), ct=document.getElementById('cType');
+  if(!d||!d.value){alert('Please select a date.');return;}
+  if(!s){alert('Please select a time slot.');return;}
+  showToast('Consultation booked: '+d.value+' at '+s.textContent);
+  s.classList.remove('sel'); s.classList.add('bkd');
+  s.textContent=s.textContent+' \u2713'; s.onclick=null;
+}
+
+/* ── DOCUMENTS ── */
+function onFiles(files){
+  var list=document.getElementById('docList'); if(!list) return;
+  for(var i=0;i<files.length;i++){
+    var f=files[i], d=document.createElement('div');
+    d.className='up-file';
+    d.innerHTML='<i class="fas fa-file-alt"></i><span style="flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">'+f.name+'</span>'
+      +'<span style="font-size:11px;color:var(--gd);flex-shrink:0;margin-right:8px">'+(f.size/1024).toFixed(1)+'KB</span>'
+      +'<button class="rm" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>';
+    list.appendChild(d);
+  }
+}
+function onDrop(e){
+  e.preventDefault();
+  document.getElementById('dropZ').classList.remove('ov');
+  if(e.dataTransfer&&e.dataTransfer.files) onFiles(e.dataTransfer.files);
+}
+function submitDocs(){
+  var list=document.getElementById('docList');
+  if(!list||!list.children.length){alert('Please add at least one file first.');return;}
+  showToast('Documents uploaded securely to your case file');
+  list.innerHTML='';
+  var b=document.getElementById('docBadge'); if(b) b.textContent='1';
+}
+
+/* ── MESSAGES ── */
+var threads=[
+  {from:'David Laurent',av:'DL',role:'Senior Case Manager \u00b7 BAMbs Consult',msgs:[
+    {t:'fr',txt:'Good morning! Here is an important update on your case '+C.ref+'.'},
+    {t:'fr',txt:'Our forensic team has identified the receiving institution. A formal freeze request is being prepared.'},
+    {t:'fr',txt:'Could you please upload your Investment Agreement? It will significantly strengthen our legal position.'}
+  ]},
+  {from:'Ana Ferreira',av:'AF',role:'Document Verification \u00b7 BAMbs Consult',msgs:[
+    {t:'fr',txt:'Hello! Your 6-month bank statement has been verified and added to your case file.'},
+    {t:'fr',txt:'We still need the Investment Agreement and Screenshots. Please upload them when convenient.'},
+    {t:'fr',txt:'Once we have all documents your case moves to legal filing immediately.'}
+  ]},
+  {from:'BAc Legal Team',av:'LT',role:'Legal Department \u00b7 BAMbs Consult',msgs:[
+    {t:'fr',txt:'Dear Client, your service agreement is ready for review and digital signature.'},
+    {t:'fr',txt:'Please go to the Service Agreement section of your dashboard.'},
+    {t:'fr',txt:'This is a contingency agreement \u2014 no payment required until funds are successfully recovered.'}
+  ]},
+  {from:'BAc Support',av:'BS',role:'Client Support \u00b7 BAMbs Consult',msgs:[
+    {t:'fr',txt:'Welcome to BAMbs Consult! Your case reference is '+C.ref+'.'},
+    {t:'fr',txt:'Your assigned case manager is Mr. David Laurent who will contact you within 24 hours.'},
+    {t:'fr',txt:'Please explore your dashboard and upload supporting documents. We are here 24/7.'}
+  ]}
+];
+function loadThread(idx,el){
+  document.querySelectorAll('.mp').forEach(function(m){m.classList.remove('sel');});
+  el.classList.add('sel');
+  var t=threads[idx];
+  setT('thAv',t.av); setT('thFrom',t.from); setT('thRole',t.role);
+  var box=document.getElementById('thMsgs'); if(!box) return;
+  var html='';
+  t.msgs.forEach(function(m){
+    html+='<div class="tm '+m.t+'"><div class="bub">'+m.txt+'</div><div class="tt">'+(m.t==='fr'?t.from:'You')+'</div></div>';
+  });
+  box.innerHTML=html; box.scrollTop=box.scrollHeight;
+}
+function doReply(){
+  var inp=document.getElementById('replyIn'); if(!inp) return;
+  var txt=inp.value.trim(); if(!txt) return;
+  var box=document.getElementById('thMsgs'); if(!box) return;
+  box.innerHTML+='<div class="tm me"><div class="bub">'+txt+'</div><div class="tt" style="text-align:right">You \u00b7 Just now</div></div>';
+  inp.value=''; box.scrollTop=box.scrollHeight;
+  setTimeout(function(){
+    box.innerHTML+='<div class="tm fr"><div class="bub">Thank you for your message. We will respond shortly.</div><div class="tt">BAc Team \u00b7 Just now</div></div>';
+    box.scrollTop=box.scrollHeight;
+  },1500);
+}
+</script>
+</body>
+</html>
