@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+M<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -64,7 +64,7 @@ h1,h2,h3,h4{font-family:var(--font-display);line-height:1.2}
 .nav-phone i{color:var(--gold)}
 
 /* ─── SIDEBAR ─── */
-#overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1100;opacity:0;pointer-events:none;transition:opacity var(--transition)}
+#overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1100;opacity:0;pointer-events:none;transition:opacity var(--transition);top:var(--nav-h)}
 #overlay.active{opacity:1;pointer-events:all}
 #sidebar{
   position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;
@@ -1489,7 +1489,7 @@ footer{background:var(--black);color:var(--white);padding:60px 0 0}
 
 <script>
 // ─── SIDEBAR ───
-function toggleSidebar(){
+function toggleSidebar(){   var s=document.getElementById('sidebar');   var h=document.getElementById('hamburger');   var o=document.getElementById('overlay');   var isOpen=s.classList.contains('open');   if(isOpen){     s.classList.remove('open');     h.classList.remove('open');     o.classList.remove('active');     o.style.pointerEvents='none';     document.body.style.overflow='';   } else {     s.classList.add('open');     h.classList.add('open');     o.classList.add('active');     o.style.pointerEvents='all';     document.body.style.overflow='hidden';   } }
   const s=document.getElementById('sidebar');
   const h=document.getElementById('hamburger');
   const o=document.getElementById('overlay');
@@ -1498,7 +1498,7 @@ function toggleSidebar(){
   o.classList.toggle('active');
   document.body.style.overflow=s.classList.contains('open')?'hidden':'';
 }
-function closeSidebar(){
+function closeSidebar(){   document.getElementById('sidebar').classList.remove('open');   document.getElementById('hamburger').classList.remove('open');   var o=document.getElementById('overlay');   o.classList.remove('active');   o.style.pointerEvents='none';   document.body.style.overflow=''; }
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('hamburger').classList.remove('open');
   document.getElementById('overlay').classList.remove('active');
