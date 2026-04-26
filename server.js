@@ -1,6 +1,6 @@
 /**
- * BAMbs Consult (BAc) — Node.js Web Server
- * www.bambsconsult.org
+ * KPMG Global — Node.js Web Server
+ * www.kpmg.org
  * 
  * Run with:  node server.js
  * Access at: http://localhost:3000
@@ -87,7 +87,7 @@ const server = http.createServer((req, res) => {
 server.listen(PORT, () => {
   console.log('');
   console.log('╔══════════════════════════════════════════════════╗');
-  console.log('║         BAMbs Consult (BAc) Web Server           ║');
+  console.log('║         KPMG Global  Web Server           ║');
   console.log('╠══════════════════════════════════════════════════╣');
   console.log(`║  Running on:  http://localhost:${PORT}               ║`);
   console.log('║  Domain:      www.bambsconsult.org               ║');
